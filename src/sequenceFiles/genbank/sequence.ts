@@ -48,19 +48,6 @@ export interface GenbankSequence {
 	Version: string;
 
 	/**
-	 * This is not an official field in the NCBI documentation, however it occurs in some Genbank files.
-	 */
-	DbSource?: {
-		UniProtKB: string;
-		class: string;
-		created: Date;
-		SequenceUpdateDate: Date;
-		AnnotationUpdateDate: Date;
-		xrefsSequenceDatabases: string[];
-		xrefsNonSequenceDatabases: string[];
-	};
-
-	/**
 	 * Word or phrase describing the sequence.
 	 */
 	Keywords: string[];

@@ -27,5 +27,5 @@ export interface Feature {
 	/**
 	 * There are many different fields in a featur, all begin with a slash. For example, `/redion_name="Some name"` in a file.
 	 */
-	slashFields: Map<string, string>;
+	slashFields: Map<string, string | undefined>;
 }

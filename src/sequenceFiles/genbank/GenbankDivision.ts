@@ -97,3 +97,7 @@ export enum GenbankDivision {
 	 */
 	Unknown = "Unknown",
 }
+
+export const strToGenbankDivision = (str: string): GenbankDivision => {
+	return GenbankDivision[str] ?? GenbankDivision.Unknown;
+};
