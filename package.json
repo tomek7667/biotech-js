@@ -10,7 +10,8 @@
     "build:watch": "tsc src/app.ts --watch --outDir dist",
     "lint": "run-p lint:**",
     "lint:eslint": "eslint --fix --ext .js,.ts src",
-    "lint:typecheck": "tsc src/app.ts --noEmit --outDir dist"
+    "lint:typecheck": "tsc src/app.ts --noEmit --outDir dist",
+    "build:npm": "tsc src/app.ts --outDir npm-dist"
   },
   "author": "Tomasz Dąbrowski",
   "license": "MIT",

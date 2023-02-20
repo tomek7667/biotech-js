@@ -3,14 +3,10 @@ import { GenbankError } from "./Errors";
 import { Feature } from "./Feature";
 import { strToGenbankDivision } from "./GenbankDivision";
 import { GenbankSequence } from "./sequence";
-import { createReadStream, ReadStream } from "fs";
 
 export class GenbankSequencesFile extends SequenceFile {
 	public sequences: GenbankSequence[] = [];
-	public processingStatus: ProcessingStatus;
-	public tookMs: number;
 
-	private stream: ReadStream;
 	private processingParams = {
 		endOfLine: /\r?\n/,
 		whitespace: /\s+/,
@@ -37,36 +33,7 @@ export class GenbankSequencesFile extends SequenceFile {
 		this.processingStatus = ProcessingStatus.NotStarted;
 	}
 
-	/**
-	 * Processes the file and returns a promise that resolves when the file is processed
-	 *
-	 * @returns Promise<void> - resolves when the file is processed
-	 */
-	public async process(): Promise<void> {
-		const start = Date.now();
-		this.processingStatus = ProcessingStatus.InProgress;
-		return new Promise((resolve, reject) => {
-			this.stream = createReadStream(this.originalPath, {
-				encoding: "utf8",
-			});
-
-			this.stream.on("data", (chunk: string) => {
-				this.onData(chunk);
-			});
-			this.stream.on("error", (error: Error) => {
-				this.onError(error);
-				this.tookMs = Date.now() - start;
-				return reject(error);
-			});
-			this.stream.on("end", () => {
-				this.onEnd();
-				this.tookMs = Date.now() - start;
-				return resolve();
-			});
-		});
-	}
-
-	private onData(chunk: string): void {
+	onData(chunk: string): void {
 		chunk = this.processingParams.preChunk + chunk;
 		chunk = chunk.replace("\t", "    ");
 		const lastDoubleSlash = chunk.lastIndexOf("//");
@@ -436,22 +403,7 @@ export class GenbankSequencesFile extends SequenceFile {
 		}
 	}
 
-	private getStringFeature(line: string, name: string): string {
-		const value = line.split(name)[1].trim();
-		return value;
-	}
-
-	private onError(error: Error): void {
-		this.processingStatus = ProcessingStatus.FailedFinished;
-		console.error(error);
-	}
-
-	private onEnd(): void {
-		this.resetProcessingParams();
-		this.processingStatus = ProcessingStatus.SuccessFinished;
-	}
-
-	private resetProcessingParams(): void {
+	resetProcessingParams(): void {
 		this.processingParams = {
 			endOfLine: /\r?\n/,
 			whitespace: /\s+/,
@@ -472,5 +424,10 @@ export class GenbankSequencesFile extends SequenceFile {
 			preChunk: "",
 			inFeature: "",
 		};
+	}
+
+	private getStringFeature(line: string, name: string): string {
+		const value = line.split(name)[1].trim();
+		return value;
 	}
 }
