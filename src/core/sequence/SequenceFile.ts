@@ -7,10 +7,10 @@ export abstract class SequenceFile {
 	readonly created: Date;
 	readonly format: FileExtension;
 	public sequences: unknown[] = [];
-	public processingStatus: ProcessingStatus;
-	public tookMs: number;
-	public sequencesNumber: number;
-	private stream: ReadStream;
+	public processingStatus?: ProcessingStatus;
+	public tookMs?: number;
+	public sequencesNumber?: number;
+	private stream?: ReadStream;
 
 	constructor(path: string) {
 		this.originalPath = path;

@@ -69,6 +69,9 @@ var GenbankSequencesFile = /** @class */ (function (_super) {
                 if (this.processingParams.currentFeature.name) {
                     this.processingParams.currentSequence.Features.push(this.processingParams.currentFeature);
                 }
+                if (this.processingParams.currentSequence.References) {
+                    this.processingParams.currentSequence.References.push(this.processingParams.currentReference);
+                }
                 this.sequences.push(this.processingParams.currentSequence);
                 this.processingParams.isOutOfChunk = true;
                 this.processingParams.currentSequence = {};
@@ -232,17 +235,9 @@ var GenbankSequencesFile = /** @class */ (function (_super) {
                         this.processingParams.currentReference = {};
                         this.processingParams.currentReference.text =
                             this.getStringFeature(line, "REFERENCE");
+                        this.processingParams.inFeature = "REFERENCE";
                     }
-                    this.processingParams.inFeature = "REFERENCE";
-                    if (i + 1 >= lines.length) {
-                        return;
-                    }
-                    while (i + 1 >= lines.length &&
-                        lines[i + 1].startsWith(" ")) {
-                        if (i + 1 >= lines.length) {
-                            return;
-                        }
-                        i++;
+                    if (lines[i].startsWith(" ")) {
                         if (lines[i].includes("AUTHORS")) {
                             this.processingParams.currentReference.Authors =
                                 lines[i]
@@ -255,34 +250,26 @@ var GenbankSequencesFile = /** @class */ (function (_super) {
                                         : s.trim();
                                 })
                                     .filter(function (s) { return s.length > 0; });
-                            continue;
                         }
-                        if (lines[i].includes("TITLE")) {
+                        else if (lines[i].includes("TITLE")) {
                             this.processingParams.currentReference.Title =
                                 lines[i].split("TITLE")[1].trim();
-                            continue;
                         }
-                        if (lines[i].includes("JOURNAL")) {
+                        else if (lines[i].includes("JOURNAL")) {
                             this.processingParams.currentReference.Journal =
                                 lines[i].split("JOURNAL")[1].trim();
-                            continue;
                         }
-                        if (lines[i].includes("PUBMED")) {
+                        else if (lines[i].includes("PUBMED")) {
                             this.processingParams.currentReference.PubMed =
                                 lines[i].split("PUBMED")[1].trim();
-                            continue;
                         }
-                        this.processingParams.currentReference.OtherFields = __spreadArray(__spreadArray([], ((_b = this.processingParams.currentReference
-                            .OtherFields) !== null && _b !== void 0 ? _b : []), true), [
-                            lines[i],
-                        ], false);
+                        else {
+                            this.processingParams.currentReference.OtherFields = __spreadArray(__spreadArray([], ((_b = this.processingParams.currentReference
+                                .OtherFields) !== null && _b !== void 0 ? _b : []), true), [
+                                lines[i],
+                            ], false);
+                        }
                     }
-                    this.processingParams.currentSequence.References.push(this.processingParams.currentReference);
-                    if (i + 1 >= lines.length) {
-                        return;
-                    }
-                    i++;
-                    line = lines[i];
                 }
                 if (this.processingParams.inFeature === "FEATURES" ||
                     line.startsWith("FEATURES")) {

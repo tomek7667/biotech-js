@@ -54,6 +54,11 @@ export class GenbankSequencesFile extends SequenceFile {
 						this.processingParams.currentFeature
 					);
 				}
+				if (this.processingParams.currentSequence.References) {
+					this.processingParams.currentSequence.References.push(
+						this.processingParams.currentReference
+					);
+				}
 				this.sequences.push(this.processingParams.currentSequence);
 				this.processingParams.isOutOfChunk = true;
 				this.processingParams.currentSequence = {} as GenbankSequence;
@@ -243,19 +248,9 @@ export class GenbankSequencesFile extends SequenceFile {
 						};
 						this.processingParams.currentReference.text =
 							this.getStringFeature(line, "REFERENCE");
+						this.processingParams.inFeature = "REFERENCE";
 					}
-					this.processingParams.inFeature = "REFERENCE";
-					if (i + 1 >= lines.length) {
-						return;
-					}
-					while (
-						i + 1 >= lines.length &&
-						lines[i + 1].startsWith(" ")
-					) {
-						if (i + 1 >= lines.length) {
-							return;
-						}
-						i++;
+					if (lines[i].startsWith(" ")) {
 						if (lines[i].includes("AUTHORS")) {
 							this.processingParams.currentReference.Authors =
 								lines[i]
@@ -268,38 +263,24 @@ export class GenbankSequencesFile extends SequenceFile {
 											: s.trim();
 									})
 									.filter((s) => s.length > 0);
-							continue;
-						}
-						if (lines[i].includes("TITLE")) {
+						} else if (lines[i].includes("TITLE")) {
 							this.processingParams.currentReference.Title =
 								lines[i].split("TITLE")[1].trim();
-							continue;
-						}
-						if (lines[i].includes("JOURNAL")) {
+						} else if (lines[i].includes("JOURNAL")) {
 							this.processingParams.currentReference.Journal =
 								lines[i].split("JOURNAL")[1].trim();
-							continue;
-						}
-						if (lines[i].includes("PUBMED")) {
+						} else if (lines[i].includes("PUBMED")) {
 							this.processingParams.currentReference.PubMed =
 								lines[i].split("PUBMED")[1].trim();
-							continue;
+						} else {
+							this.processingParams.currentReference.OtherFields =
+								[
+									...(this.processingParams.currentReference
+										.OtherFields ?? []),
+									lines[i],
+								];
 						}
-						this.processingParams.currentReference.OtherFields = [
-							...(this.processingParams.currentReference
-								.OtherFields ?? []),
-							lines[i],
-						];
 					}
-
-					this.processingParams.currentSequence.References.push(
-						this.processingParams.currentReference
-					);
-					if (i + 1 >= lines.length) {
-						return;
-					}
-					i++;
-					line = lines[i];
 				}
 				if (
 					this.processingParams.inFeature === "FEATURES" ||
