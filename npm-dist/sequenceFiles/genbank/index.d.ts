@@ -5,6 +5,8 @@ export declare class GenbankSequencesFile extends SequenceFile {
     private processingParams;
     constructor(path: string);
     onData(chunk: string): void;
+    onEndCallback(): void;
+    private _onData;
     resetProcessingParams(): void;
     private getStringFeature;
 }

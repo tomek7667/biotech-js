@@ -44,12 +44,48 @@ var GenbankSequencesFile = /** @class */ (function (_super) {
             currentFeature: {},
             previousFeatureName: "",
             preChunk: "",
-            inFeature: ""
+            inFeature: "",
+            chunkToWorkOn: ""
         };
         _this.processingStatus = core_1.ProcessingStatus.NotStarted;
         return _this;
     }
     GenbankSequencesFile.prototype.onData = function (chunk) {
+        var numberOfNewSequences = chunk.split("\nLOCUS").length - 1;
+        if (numberOfNewSequences === 1) {
+            this.processingParams.chunkToWorkOn += chunk.split("\nLOCUS")[0];
+            this._onData(this.processingParams.chunkToWorkOn);
+            this.processingParams.chunkToWorkOn =
+                "\nLOCUS" + chunk.split("\nLOCUS")[1];
+        }
+        else if (numberOfNewSequences === 0) {
+            this.processingParams.chunkToWorkOn += chunk;
+        }
+        else {
+            var sequences = chunk.split("\nLOCUS");
+            for (var i = 0; i < sequences.length; i++) {
+                var sequence = sequences[i];
+                if (i === 0) {
+                    this.processingParams.chunkToWorkOn += sequence;
+                }
+                else if (i === sequences.length - 2) {
+                    this.processingParams.chunkToWorkOn = "LOCUS" + sequence;
+                    this._onData(this.processingParams.chunkToWorkOn);
+                }
+                else if (i !== sequences.length - 1) {
+                    this._onData(this.processingParams.chunkToWorkOn);
+                    this.processingParams.chunkToWorkOn = "LOCUS" + sequence;
+                }
+                else {
+                    this.processingParams.chunkToWorkOn += sequence;
+                }
+            }
+        }
+    };
+    GenbankSequencesFile.prototype.onEndCallback = function () {
+        this._onData(this.processingParams.chunkToWorkOn);
+    };
+    GenbankSequencesFile.prototype._onData = function (chunk) {
         var _a, _b, _c, _d, _e, _f, _g;
         chunk = this.processingParams.preChunk + chunk;
         chunk = chunk.replace("\t", "    ");
@@ -368,7 +404,8 @@ var GenbankSequencesFile = /** @class */ (function (_super) {
             currentFeature: {},
             previousFeatureName: "",
             preChunk: "",
-            inFeature: ""
+            inFeature: "",
+            chunkToWorkOn: ""
         };
     };
     GenbankSequencesFile.prototype.getStringFeature = function (line, name) {

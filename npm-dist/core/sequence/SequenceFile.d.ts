@@ -20,4 +20,5 @@ export declare abstract class SequenceFile {
     private onEnd;
     abstract onData(chunk: string): void;
     abstract resetProcessingParams(): void;
+    onEndCallback?(): void;
 }

@@ -54,6 +54,7 @@ export abstract class SequenceFile {
 	}
 
 	private onEnd(): void {
+		this.onEndCallback?.();
 		this.resetProcessingParams();
 		this.sequencesNumber = this.sequences.length;
 		this.processingStatus = ProcessingStatus.SuccessFinished;
@@ -61,4 +62,5 @@ export abstract class SequenceFile {
 
 	abstract onData(chunk: string): void;
 	abstract resetProcessingParams(): void;
+	onEndCallback?(): void;
 }
