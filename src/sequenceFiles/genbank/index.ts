@@ -199,26 +199,36 @@ export class GenbankSequencesFile extends SequenceFile {
 					if (i + 1 >= lines.length) {
 						return;
 					}
+					let isInSource = true;
 					while (lines[i + 1].startsWith(" ")) {
 						if (i + 1 >= lines.length) {
 							return;
 						}
 						i++;
-						if (lines[i].includes("ORGANISM")) continue;
-						this.processingParams.currentSequence.Source.Organism =
-							[
-								...this.processingParams.currentSequence.Source
-									.Organism,
-								lines[i]
-									.trim()
-									.split(";")
-									.map((s) => {
-										return s.trim().endsWith(".")
-											? s.trim().slice(0, -1)
-											: s.trim();
-									})
-									.filter((s) => s.length > 0),
-							].flat();
+						if (lines[i].includes("ORGANISM")) {
+							isInSource = false;
+							continue;
+						}
+
+						if (isInSource) {
+							this.processingParams.currentSequence.Source.text +=
+								" " + lines[i].trim();
+						} else {
+							this.processingParams.currentSequence.Source.Organism =
+								[
+									...this.processingParams.currentSequence
+										.Source.Organism,
+									lines[i]
+										.trim()
+										.split(";")
+										.map((s) => {
+											return s.trim().endsWith(".")
+												? s.trim().slice(0, -1)
+												: s.trim();
+										})
+										.filter((s) => s.length > 0),
+								].flat();
+						}
 						if (i + 1 >= lines.length) {
 							return;
 						}

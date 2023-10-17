@@ -197,26 +197,35 @@ var GenbankSequencesFile = /** @class */ (function (_super) {
                     if (i + 1 >= lines.length) {
                         return;
                     }
+                    var isInSource = true;
                     while (lines[i + 1].startsWith(" ")) {
                         if (i + 1 >= lines.length) {
                             return;
                         }
                         i++;
-                        if (lines[i].includes("ORGANISM"))
+                        if (lines[i].includes("ORGANISM")) {
+                            isInSource = false;
                             continue;
-                        this.processingParams.currentSequence.Source.Organism =
-                            __spreadArray(__spreadArray([], this.processingParams.currentSequence.Source
-                                .Organism, true), [
-                                lines[i]
-                                    .trim()
-                                    .split(";")
-                                    .map(function (s) {
-                                    return s.trim().endsWith(".")
-                                        ? s.trim().slice(0, -1)
-                                        : s.trim();
-                                })
-                                    .filter(function (s) { return s.length > 0; }),
-                            ], false).flat();
+                        }
+                        if (isInSource) {
+                            this.processingParams.currentSequence.Source.text +=
+                                " " + lines[i].trim();
+                        }
+                        else {
+                            this.processingParams.currentSequence.Source.Organism =
+                                __spreadArray(__spreadArray([], this.processingParams.currentSequence
+                                    .Source.Organism, true), [
+                                    lines[i]
+                                        .trim()
+                                        .split(";")
+                                        .map(function (s) {
+                                        return s.trim().endsWith(".")
+                                            ? s.trim().slice(0, -1)
+                                            : s.trim();
+                                    })
+                                        .filter(function (s) { return s.length > 0; }),
+                                ], false).flat();
+                        }
                         if (i + 1 >= lines.length) {
                             return;
                         }
