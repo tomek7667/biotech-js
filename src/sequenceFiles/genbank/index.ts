@@ -26,6 +26,7 @@ export class GenbankSequencesFile extends SequenceFile {
 		previousFeatureName: "",
 		preChunk: "",
 		inFeature: "",
+		chunkToWorkOn: "",
 	};
 
 	constructor(path: string) {
@@ -33,7 +34,40 @@ export class GenbankSequencesFile extends SequenceFile {
 		this.processingStatus = ProcessingStatus.NotStarted;
 	}
 
-	onData(chunk: string): void {
+	public onData(chunk: string): void {
+		const numberOfNewSequences = chunk.split("\nLOCUS").length - 1;
+
+		if (numberOfNewSequences === 1) {
+			this.processingParams.chunkToWorkOn += chunk.split("\nLOCUS")[0];
+			this._onData(this.processingParams.chunkToWorkOn);
+			this.processingParams.chunkToWorkOn =
+				"\nLOCUS" + chunk.split("\nLOCUS")[1];
+		} else if (numberOfNewSequences === 0) {
+			this.processingParams.chunkToWorkOn += chunk;
+		} else {
+			const sequences = chunk.split("\nLOCUS");
+			for (let i = 0; i < sequences.length; i++) {
+				const sequence = sequences[i];
+				if (i === 0) {
+					this.processingParams.chunkToWorkOn += sequence;
+				} else if (i === sequences.length - 2) {
+					this.processingParams.chunkToWorkOn = "LOCUS" + sequence;
+					this._onData(this.processingParams.chunkToWorkOn);
+				} else if (i !== sequences.length - 1) {
+					this._onData(this.processingParams.chunkToWorkOn);
+					this.processingParams.chunkToWorkOn = "LOCUS" + sequence;
+				} else {
+					this.processingParams.chunkToWorkOn += sequence;
+				}
+			}
+		}
+	}
+
+	onEndCallback(): void {
+		this._onData(this.processingParams.chunkToWorkOn);
+	}
+
+	private _onData(chunk: string): void {
 		chunk = this.processingParams.preChunk + chunk;
 		chunk = chunk.replace("\t", "    ");
 		const lastDoubleSlash = chunk.lastIndexOf("//");
@@ -414,6 +448,7 @@ export class GenbankSequencesFile extends SequenceFile {
 			previousFeatureName: "",
 			preChunk: "",
 			inFeature: "",
+			chunkToWorkOn: "",
 		};
 	}
 

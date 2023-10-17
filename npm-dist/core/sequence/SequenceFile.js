@@ -86,6 +86,8 @@ var SequenceFile = /** @class */ (function () {
         console.error(error);
     };
     SequenceFile.prototype.onEnd = function () {
+        var _a;
+        (_a = this.onEndCallback) === null || _a === void 0 ? void 0 : _a.call(this);
         this.resetProcessingParams();
         this.sequencesNumber = this.sequences.length;
         this.processingStatus = __1.ProcessingStatus.SuccessFinished;
