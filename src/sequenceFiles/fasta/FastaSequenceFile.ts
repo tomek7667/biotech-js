@@ -1,5 +1,5 @@
 import { SequenceFile } from "../../core";
-import { FastaSequence } from "./sequence";
+import { FastaSequence } from "./FastaSequence";
 
 export class FastaSequenceFile extends SequenceFile {
 	public sequences: FastaSequence[] = [];

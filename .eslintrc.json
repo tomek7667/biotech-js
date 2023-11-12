@@ -15,5 +15,6 @@
 		"indent": ["off"],
 		"quotes": ["error", "double"],
 		"semi": ["error", "always"]
-	}
+	},
+	"ignorePatterns": ["*.js"]
 }

@@ -1,1 +1,1 @@
-export * from "./fastq";
+export * from "./FastqSequenceFile";

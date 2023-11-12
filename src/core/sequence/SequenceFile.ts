@@ -1,6 +1,9 @@
 import { ProcessingStatus } from "..";
 import { createReadStream, ReadStream } from "fs";
 import { FileExtensionHandler, FileExtension } from "../file/FileExtension";
+import { FastaSequence } from "../../sequenceFiles/fasta/FastaSequence";
+import { FastqSequence } from "../../sequenceFiles/fastq/FastqSequence";
+import { GenbankSequence } from "../../sequenceFiles/genbank/GenbankSequence";
 
 export abstract class SequenceFile {
 	readonly originalPath: string;
@@ -58,7 +61,79 @@ export abstract class SequenceFile {
 		this.resetProcessingParams();
 		this.sequencesNumber = this.sequences.length;
 		this.processingStatus = ProcessingStatus.SuccessFinished;
+		this.qualityCheck();
 	}
+
+	private qualityCheck = (): void => {
+		let invalidSequences = 0;
+		let isQualityOk = true;
+		switch (this.format) {
+			case FileExtension.Fasta: {
+				const sequences = this.sequences as FastaSequence[];
+				sequences.forEach((data) => {
+					if (data.sequence === null || data.sequence === undefined) {
+						invalidSequences++;
+						isQualityOk = false;
+					}
+				});
+				break;
+			}
+			case FileExtension.Fastq: {
+				const sequences = this.sequences as FastqSequence[];
+				sequences.forEach((data) => {
+					if (
+						data.sequence === null ||
+						data.sequence === undefined ||
+						data.quality === null ||
+						data.quality === undefined
+					) {
+						invalidSequences++;
+						isQualityOk = false;
+					}
+				});
+				break;
+			}
+			case FileExtension.Genbank: {
+				const sequences = this.sequences as GenbankSequence[];
+				sequences.forEach((data) => {
+					if (
+						data.Origin === null ||
+						data.Origin === undefined ||
+						data.Locus === null ||
+						data.Locus === undefined ||
+						data.Locus.Name === null ||
+						data.Locus.Name === undefined
+					) {
+						invalidSequences++;
+						isQualityOk = false;
+					}
+				});
+
+				break;
+			}
+			default: {
+				this.warn("Unknown file extension. Skipping quality check.");
+				break;
+			}
+		}
+		if (!isQualityOk) {
+			this.warn(
+				`Quality check failed for ${this.format}:${this.originalPath}. Invalid sequences: ${invalidSequences}/${this.sequences.length}`
+			);
+			this.processingStatus =
+				ProcessingStatus.SuccessFinishedWithWarnings;
+		}
+		if (
+			invalidSequences === this.sequences.length ||
+			invalidSequences === this.sequencesNumber
+		) {
+			this.processingStatus = ProcessingStatus.FailedFinished;
+		}
+	};
+
+	private warn = (str: string): void => {
+		console.log(`[WARNING] ${str}`);
+	};
 
 	abstract onData(chunk: string): void;
 	abstract resetProcessingParams(): void;

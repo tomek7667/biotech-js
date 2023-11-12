@@ -1,1 +1,1 @@
-export * from "./genbank";
+export * from "./GenbankSequencesFile";
