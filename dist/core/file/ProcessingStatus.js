@@ -6,5 +6,6 @@ var ProcessingStatus;
     ProcessingStatus["NotStarted"] = "Not started";
     ProcessingStatus["InProgress"] = "In progress";
     ProcessingStatus["SuccessFinished"] = "Successfully finished";
+    ProcessingStatus["SuccessFinishedWithWarnings"] = "Successfully finished with warnings";
     ProcessingStatus["FailedFinished"] = "Failed to finish";
 })(ProcessingStatus = exports.ProcessingStatus || (exports.ProcessingStatus = {}));

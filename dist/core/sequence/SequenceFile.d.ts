@@ -18,6 +18,8 @@ export declare abstract class SequenceFile {
     process(): Promise<void>;
     private onError;
     private onEnd;
+    private qualityCheck;
+    private warn;
     abstract onData(chunk: string): void;
     abstract resetProcessingParams(): void;
     onEndCallback?(): void;

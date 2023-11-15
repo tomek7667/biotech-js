@@ -7,4 +7,5 @@ var GenbankError;
     GenbankError["SeparatorNotFound"] = "Separator not found";
     GenbankError["CorruptedFeatureNumber"] = "Corrupted feature number";
     GenbankError["CurrentFeatureNotInitialized"] = "Current feature is not initialized";
+    GenbankError["InvalidSequence"] = "Invalid sequence";
 })(GenbankError = exports.GenbankError || (exports.GenbankError = {}));

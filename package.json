@@ -1,60 +1,67 @@
 {
-  "name": "biotech-js",
-  "version": "1.0.6",
-  "description": "Package developed at A&A Biotechnology for reading all kinds of biotechnology related files",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "start": "node dist/app.js",
-    "start:watch": "nodemon --watch \"dist/**\" dist/app.js",
-    "build": "tsc src/index.ts --outDir dist -d",
-    "build:watch": "tsc src/index.ts --watch --outDir dist -d",
-    "lint": "run-p lint:**",
-    "lint:eslint": "eslint --fix --ext .js,.ts src",
-    "lint:typecheck": "tsc src/index.ts --noEmit --outDir dist",
-    "build:npm": "tsc src/index.ts --outDir npm-dist -d"
-  },
-  "author": "Tomasz Dąbrowski",
-  "license": "MIT",
-  "engines": {
-    "node": ">=18.10.0"
-  },
-  "devDependencies": {
-    "@types/eslint": "^8.21.1",
-    "@types/rollup-plugin-node-builtins": "^2.1.2",
-    "@types/rollup-plugin-node-globals": "^1.4.1",
-    "@typescript-eslint/eslint-plugin": "^5.52.0",
-    "@typescript-eslint/parser": "^5.52.0",
-    "eslint": "^8.34.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^8.0.3",
-    "nodemon": "^2.0.20",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.4",
-    "typescript": "^4.9.5"
-  },
-  "keywords": [
-    "biotechnology",
-    "biotech",
-    "genbank",
-    "fasta",
-    "fastq",
-    "gbk",
-    "gp",
-    "proteinase",
-    "sequence"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:tomek7667/biotech-js.git"
-  },
-  "files": [
-    "dist/"
-  ],
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  }
+	"name": "biotech-js",
+	"version": "1.0.8",
+	"description": "Package developed at A&A Biotechnology for reading all kinds of biotechnology related files",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"start": "node dist/index.js",
+		"start:watch": "nodemon --watch \"dist/**\" dist/index.js",
+		"build": "tsc src/index.ts --outDir dist -d",
+		"build:watch": "tsc src/index.ts --watch --outDir dist -d",
+		"lint": "run-p lint:**",
+		"lint:eslint": "eslint --fix --ext .js,.ts src",
+		"lint:typecheck": "tsc src/index.ts --noEmit --outDir dist",
+		"build:npm": "tsc src/index.ts --outDir npm-dist -d",
+		"docs": "typedoc --out docs src/",
+		"b": "node prebuild"
+	},
+	"author": "Tomasz Dąbrowski",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18.10.0"
+	},
+	"devDependencies": {
+		"@types/eslint": "8.21.1",
+		"@types/node": "20.9.0",
+		"@types/rollup-plugin-node-builtins": "2.1.2",
+		"@types/rollup-plugin-node-globals": "1.4.1",
+		"@typescript-eslint/eslint-plugin": "5.52.0",
+		"@typescript-eslint/parser": "5.52.0",
+		"eslint": "8.34.0",
+		"eslint-plugin-import": "2.27.5",
+		"eslint-plugin-prettier": "4.2.1",
+		"husky": "8.0.3",
+		"nodemon": "2.0.20",
+		"npm-run-all": "4.1.5",
+		"prettier": "2.8.4",
+		"ts-node": "10.9.1",
+		"tsc": "2.0.4",
+		"typedoc": "0.25.3",
+		"typescript": "4.9.5"
+	},
+	"keywords": [
+		"biotechnology",
+		"biotech",
+		"genbank",
+		"fasta",
+		"fastq",
+		"gbk",
+		"gp",
+		"proteinase",
+		"sequence"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:tomek7667/biotech-js.git"
+	},
+	"files": [
+		"dist/"
+	],
+	"husky": {
+		"hooks": {
+			"pre-commit": "npm run lint"
+		}
+	},
+	"dependencies": {}
 }

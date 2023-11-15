@@ -1,1 +1,1 @@
-export * from "./fasta";
+export * from "./FastaSequenceFile";

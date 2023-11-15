@@ -42,7 +42,68 @@ var fs_1 = require("fs");
 var FileExtension_1 = require("../file/FileExtension");
 var SequenceFile = /** @class */ (function () {
     function SequenceFile(path) {
+        var _this = this;
         this.sequences = [];
+        this.qualityCheck = function () {
+            var invalidSequences = 0;
+            var isQualityOk = true;
+            switch (_this.format) {
+                case FileExtension_1.FileExtension.Fasta: {
+                    var sequences = _this.sequences;
+                    sequences.forEach(function (data) {
+                        if (data.sequence === null || data.sequence === undefined) {
+                            invalidSequences++;
+                            isQualityOk = false;
+                        }
+                    });
+                    break;
+                }
+                case FileExtension_1.FileExtension.Fastq: {
+                    var sequences = _this.sequences;
+                    sequences.forEach(function (data) {
+                        if (data.sequence === null ||
+                            data.sequence === undefined ||
+                            data.quality === null ||
+                            data.quality === undefined) {
+                            invalidSequences++;
+                            isQualityOk = false;
+                        }
+                    });
+                    break;
+                }
+                case FileExtension_1.FileExtension.Genbank: {
+                    var sequences = _this.sequences;
+                    sequences.forEach(function (data) {
+                        if (data.Origin === null ||
+                            data.Origin === undefined ||
+                            data.Locus === null ||
+                            data.Locus === undefined ||
+                            data.Locus.Name === null ||
+                            data.Locus.Name === undefined) {
+                            invalidSequences++;
+                            isQualityOk = false;
+                        }
+                    });
+                    break;
+                }
+                default: {
+                    _this.warn("Unknown file extension. Skipping quality check.");
+                    break;
+                }
+            }
+            if (!isQualityOk) {
+                _this.warn("Quality check failed for ".concat(_this.format, ":").concat(_this.originalPath, ". Invalid sequences: ").concat(invalidSequences, "/").concat(_this.sequences.length));
+                _this.processingStatus =
+                    __1.ProcessingStatus.SuccessFinishedWithWarnings;
+            }
+            if (invalidSequences === _this.sequences.length ||
+                invalidSequences === _this.sequencesNumber) {
+                _this.processingStatus = __1.ProcessingStatus.FailedFinished;
+            }
+        };
+        this.warn = function (str) {
+            console.log("[WARNING] ".concat(str));
+        };
         this.originalPath = path;
         this.created = new Date();
         var extension = path.substring(path.lastIndexOf("."));
@@ -91,6 +152,7 @@ var SequenceFile = /** @class */ (function () {
         this.resetProcessingParams();
         this.sequencesNumber = this.sequences.length;
         this.processingStatus = __1.ProcessingStatus.SuccessFinished;
+        this.qualityCheck();
     };
     return SequenceFile;
 }());

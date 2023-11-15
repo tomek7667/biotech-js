@@ -85,6 +85,6 @@ var GenbankDivision;
 })(GenbankDivision = exports.GenbankDivision || (exports.GenbankDivision = {}));
 var strToGenbankDivision = function (str) {
     var _a;
-    return (_a = GenbankDivision[str]) !== null && _a !== void 0 ? _a : GenbankDivision.Unknown;
+    return ((_a = GenbankDivision[str]) !== null && _a !== void 0 ? _a : GenbankDivision.Unknown);
 };
 exports.strToGenbankDivision = strToGenbankDivision;
