@@ -4,6 +4,7 @@ import { FileExtensionHandler, FileExtension } from "../file/FileExtension";
 import { FastaSequence } from "../../sequenceFiles/fasta/FastaSequence";
 import { FastqSequence } from "../../sequenceFiles/fastq/FastqSequence";
 import { GenbankSequence } from "../../sequenceFiles/genbank/GenbankSequence";
+import { writeFile } from "fs/promises";
 
 export abstract class SequenceFile {
 	readonly originalPath: string;
@@ -50,6 +51,32 @@ export abstract class SequenceFile {
 			});
 		});
 	}
+
+	/**
+	 * Saves the processed file to a new file and returns the path of the new file
+	 *
+	 * @param path - optional path to save the file to
+	 */
+	public save = async (path?: string): Promise<string> => {
+		let outputPath = "";
+		if (path) {
+			outputPath = path;
+		} else {
+			const firstPart = this.originalPath.substring(
+				0,
+				this.originalPath.lastIndexOf(".")
+			);
+			const extension = this.originalPath.substring(
+				this.originalPath.lastIndexOf(".")
+			);
+			outputPath = `${firstPart}_processed${extension}`;
+		}
+		const string = this.toString();
+		await writeFile(outputPath, string);
+		return outputPath;
+	};
+
+	abstract toString(): string;
 
 	private onError(error: Error): void {
 		this.processingStatus = ProcessingStatus.FailedFinished;

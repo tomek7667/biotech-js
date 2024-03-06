@@ -15,7 +15,12 @@ export class FastqSequenceFile extends SequenceFile {
 		super(path);
 	}
 
-	onData(chunk: string): void {
+	public toString(): string {
+		// TODO: Implement
+		throw new Error("Method not implemented.");
+	}
+
+	public onData(chunk: string): void {
 		const lines = chunk.split(/\r?\n/);
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i];
@@ -67,7 +72,7 @@ export class FastqSequenceFile extends SequenceFile {
 		}
 	}
 
-	resetProcessingParams(): void {
+	public resetProcessingParams(): void {
 		this.processingParams = {
 			preChunk: "",
 			currentSequence: {} as FastqSequence,

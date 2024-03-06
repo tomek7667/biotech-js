@@ -33,3 +33,11 @@ await fastqFile.process();
 console.log(fastqFile.processingStatus);
 console.log(fastqFile.sequences);
 ```
+
+### Deployment
+
+When deploying the library to npm run:
+
+```bash
+yarn b
+```

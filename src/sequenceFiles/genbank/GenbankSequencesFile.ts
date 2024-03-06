@@ -50,6 +50,11 @@ export class GenbankSequencesFile extends SequenceFile {
 		return newSequences[newSequences.length - 1];
 	};
 
+	public toString(): string {
+		// TODO: Implement
+		throw new Error("Method not implemented.");
+	}
+
 	private processSequence = (chunk: string): GenbankSequence => {
 		this.processingParams.currentSequence = {} as GenbankSequence;
 		this.processingParams.currentFeature = {} as Feature;

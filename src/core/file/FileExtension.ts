@@ -9,21 +9,47 @@ export class FileExtensionHandler {
 	 * @returns {string[]} The list of file extensions for FASTA files.
 	 */
 	static Fasta(): string[] {
-		return [".fasta", ".fna", ".ffn", ".faa", ".frn", ".fa"];
+		return [
+			".fasta",
+			".fna",
+			".ffn",
+			".faa",
+			".frn",
+			".fa",
+			"fasta",
+			"fna",
+			"ffn",
+			"faa",
+			"frn",
+			"fa",
+		];
 	}
 
 	/**
 	 * @returns {string[]} The list of file extensions for FASTQ files.
 	 */
 	static Fastq(): string[] {
-		return [".fastq", ".fq"];
+		return [".fastq", ".fq", "fastq", "fq"];
 	}
 
 	/**
 	 * @returns {string[]} The list of file extensions for Genbank files.
 	 */
 	static Genbank(): string[] {
-		return [".gb", ".gbk", ".genbank", ".gp", ".genpep", ".genpept"];
+		return [
+			".gb",
+			".gbk",
+			".genbank",
+			".gp",
+			".genpep",
+			".genpept",
+			"gb",
+			"gbk",
+			"genbank",
+			"gp",
+			"genpep",
+			"genpept",
+		];
 	}
 
 	/**
