@@ -23,17 +23,40 @@ var FastaSequenceFile = /** @class */ (function (_super) {
         var _this = _super.call(this, path) || this;
         _this.sequences = [];
         _this.processingParams = {
-            preChunk: "",
-            currentSequence: {}
+            currentSequence: {
+                description: "",
+                sequence: ""
+            },
+            gatheredFastaData: ""
         };
         return _this;
     }
+    FastaSequenceFile.prototype.toString = function () {
+        var content = this.sequences
+            .map(function (_a) {
+            var description = _a.description, sequence = _a.sequence;
+            // additionally remove all newlines
+            var sequenceText = ">".concat(description
+                .replace(/\n/g, "")
+                .replace(/\r/g, ""), "\n");
+            for (var i = 0; i < sequence.length; i += 60) {
+                sequenceText += sequence.slice(i, i + 60) + "\n";
+            }
+            return sequenceText;
+        })
+            .join("");
+        return content;
+    };
     FastaSequenceFile.prototype.onData = function (chunk) {
-        var lines = chunk.split(/\r?\n/);
+        this.processingParams.gatheredFastaData += chunk;
+    };
+    FastaSequenceFile.prototype.onEndCallback = function () {
+        var lines = this.processingParams.gatheredFastaData.split(/\r?\n/);
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
             if (line.startsWith(">")) {
-                if (this.processingParams.currentSequence.sequence) {
+                if (this.processingParams.currentSequence.sequence !== "" &&
+                    this.processingParams.currentSequence.description !== "") {
                     this.sequences.push(this.processingParams.currentSequence);
                 }
                 this.processingParams.currentSequence = {
@@ -47,12 +70,23 @@ var FastaSequenceFile = /** @class */ (function (_super) {
                     .toUpperCase();
             }
         }
+        this.sequences.push(this.processingParams.currentSequence);
+        this.removeEmptySequences();
     };
     FastaSequenceFile.prototype.resetProcessingParams = function () {
         this.processingParams = {
-            preChunk: "",
-            currentSequence: {}
+            currentSequence: {
+                description: "",
+                sequence: ""
+            },
+            gatheredFastaData: ""
         };
+    };
+    FastaSequenceFile.prototype.removeEmptySequences = function () {
+        this.sequences = this.sequences.filter(function (_a) {
+            var sequence = _a.sequence, description = _a.description;
+            return sequence.length > 0 && description.length > 0;
+        });
     };
     return FastaSequenceFile;
 }(core_1.SequenceFile));

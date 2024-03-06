@@ -346,6 +346,10 @@ var GenbankSequencesFile = /** @class */ (function (_super) {
         _this.processingStatus = core_1.ProcessingStatus.NotStarted;
         return _this;
     }
+    GenbankSequencesFile.prototype.toString = function () {
+        // TODO: Implement
+        throw new Error("Method not implemented.");
+    };
     GenbankSequencesFile.prototype.getStringFeature = function (line, name) {
         var value = line.split(name)[1].trim();
         return value;

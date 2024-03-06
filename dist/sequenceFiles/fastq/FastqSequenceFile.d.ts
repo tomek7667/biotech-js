@@ -5,6 +5,7 @@ export declare class FastqSequenceFile extends SequenceFile {
     private processingParams;
     private lowestQuality;
     constructor(path: string);
+    toString(): string;
     onData(chunk: string): void;
     resetProcessingParams(): void;
 }

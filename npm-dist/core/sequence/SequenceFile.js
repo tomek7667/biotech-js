@@ -40,10 +40,38 @@ exports.SequenceFile = void 0;
 var __1 = require("..");
 var fs_1 = require("fs");
 var FileExtension_1 = require("../file/FileExtension");
+var promises_1 = require("fs/promises");
 var SequenceFile = /** @class */ (function () {
     function SequenceFile(path) {
         var _this = this;
         this.sequences = [];
+        /**
+         * Saves the processed file to a new file and returns the path of the new file
+         *
+         * @param path - optional path to save the file to
+         */
+        this.save = function (path) { return __awaiter(_this, void 0, void 0, function () {
+            var outputPath, firstPart, extension, string;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        outputPath = "";
+                        if (path) {
+                            outputPath = path;
+                        }
+                        else {
+                            firstPart = this.originalPath.substring(0, this.originalPath.lastIndexOf("."));
+                            extension = this.originalPath.substring(this.originalPath.lastIndexOf("."));
+                            outputPath = "".concat(firstPart, "_processed").concat(extension);
+                        }
+                        string = this.toString();
+                        return [4 /*yield*/, (0, promises_1.writeFile)(outputPath, string)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, outputPath];
+                }
+            });
+        }); };
         this.qualityCheck = function () {
             var invalidSequences = 0;
             var isQualityOk = true;

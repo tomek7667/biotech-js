@@ -30,6 +30,10 @@ var FastqSequenceFile = /** @class */ (function (_super) {
         _this.lowestQuality = "!".charCodeAt(0);
         return _this;
     }
+    FastqSequenceFile.prototype.toString = function () {
+        // TODO: Implement
+        throw new Error("Method not implemented.");
+    };
     FastqSequenceFile.prototype.onData = function (chunk) {
         var _this = this;
         var lines = chunk.split(/\r?\n/);

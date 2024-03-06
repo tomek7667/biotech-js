@@ -16,6 +16,13 @@ export declare abstract class SequenceFile {
      * @returns Promise<void> - resolves when the file is processed
      */
     process(): Promise<void>;
+    /**
+     * Saves the processed file to a new file and returns the path of the new file
+     *
+     * @param path - optional path to save the file to
+     */
+    save: (path?: string) => Promise<string>;
+    abstract toString(): string;
     private onError;
     private onEnd;
     private qualityCheck;

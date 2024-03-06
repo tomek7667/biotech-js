@@ -14,19 +14,45 @@ var FileExtensionHandler = /** @class */ (function () {
      * @returns {string[]} The list of file extensions for FASTA files.
      */
     FileExtensionHandler.Fasta = function () {
-        return [".fasta", ".fna", ".ffn", ".faa", ".frn", ".fa"];
+        return [
+            ".fasta",
+            ".fna",
+            ".ffn",
+            ".faa",
+            ".frn",
+            ".fa",
+            "fasta",
+            "fna",
+            "ffn",
+            "faa",
+            "frn",
+            "fa",
+        ];
     };
     /**
      * @returns {string[]} The list of file extensions for FASTQ files.
      */
     FileExtensionHandler.Fastq = function () {
-        return [".fastq", ".fq"];
+        return [".fastq", ".fq", "fastq", "fq"];
     };
     /**
      * @returns {string[]} The list of file extensions for Genbank files.
      */
     FileExtensionHandler.Genbank = function () {
-        return [".gb", ".gbk", ".genbank", ".gp", ".genpep", ".genpept"];
+        return [
+            ".gb",
+            ".gbk",
+            ".genbank",
+            ".gp",
+            ".genpep",
+            ".genpept",
+            "gb",
+            "gbk",
+            "genbank",
+            "gp",
+            "genpep",
+            "genpept",
+        ];
     };
     /**
      * Converts a file extension to a FileExtension enum.
