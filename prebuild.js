@@ -16,12 +16,11 @@ packageJson.version = version;
 writeFileSync("./package.json", JSON.stringify(packageJson, null, "\t") + "\n");
 
 const preCommands = [
-	"yarn build",
 	"yarn lint",
-	"yarn lint:eslint",
 	"yarn lint:typecheck",
+	"yarn lint:eslint",
 	"yarn build",
-	"yarn build:npm",
+	"yarn docs",
 ];
 
 for (let preCommand of preCommands) {

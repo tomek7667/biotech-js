@@ -12,8 +12,7 @@
 		"lint": "run-p lint:**",
 		"lint:eslint": "eslint --fix --ext .js,.ts src",
 		"lint:typecheck": "tsc src/index.ts --noEmit --outDir dist",
-		"build:npm": "tsc src/index.ts --outDir npm-dist -d",
-		"docs": "typedoc --out docs src/",
+		"docs": "typedoc --out docs src/index.ts",
 		"b": "node prebuild",
 		"test": "jest"
 	},
