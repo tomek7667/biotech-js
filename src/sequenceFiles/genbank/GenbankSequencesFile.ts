@@ -51,8 +51,60 @@ export class GenbankSequencesFile extends SequenceFile {
 	};
 
 	public toString(): string {
-		// TODO: Implement
 		throw new Error("Method not implemented.");
+		// let content = "";
+		// this.sequences.forEach((sequence) => {
+		// 	content += `LOCUS       ${sequence.Locus.Name}                ${
+		// 		sequence.Locus.SequenceLength
+		// 	} bp    ${sequence.Locus.MoleculeType.padEnd(8, " ")}${
+		// 		sequence.Locus.GenbankDivision
+		// 	} ${sequence.Locus.ModificationDate.toISOString().slice(0, 10)}\n`;
+		// 	content += `DEFINITION  ${sequence.Definition}\n`;
+		// 	content += `ACCESSION   ${sequence.Accession}\n`;
+		// 	content += `VERSION     ${sequence.Version}\n`;
+		// 	content += `KEYWORDS    ${
+		// 		sequence.Keywords.length === 0
+		// 			? "."
+		// 			: sequence.Keywords.join("; ")
+		// 	}\n`;
+		// 	content += `SOURCE      ${sequence.Source.text}\n`;
+		// 	content += `REFERENCE   ${sequence.References.map(
+		// 		(reference) =>
+		// 			`${reference.text}\n  AUTHORS   ${reference.Authors.join(
+		// 				", "
+		// 			)}\n  TITLE     ${
+		// 				reference.Title
+		// 			}\n  JOURNAL   ${reference.Journal.replace(/[\s]+/g, " ")}${
+		// 				reference.PubMed
+		// 					? "\n  PUBMED    " + reference.PubMed
+		// 					: ""
+		// 			}\n  ${reference.OtherFields.join("\n  ")}`
+		// 	).join("\n")}\n`;
+		// 	content += "FEATURES             Location/Qualifiers\n";
+		// 	content += sequence.Features.map(
+		// 		(feature) =>
+		// 			`     ${feature.name.padEnd(16, " ")}${feature.from}..${
+		// 				feature.to
+		// 			}\n${Array.from(feature.slashFields)
+		// 				.map(([key, value]) => {
+		// 					return `                     /${key}="${value}"\n`;
+		// 				})
+		// 				.join("")}`
+		// 	).join("");
+		// 	content += "ORIGIN      \n";
+		// 	for (let i = 0; i < sequence.Origin.length; i += 60) {
+		// 		let sequencePart = sequence.Origin.slice(
+		// 			i,
+		// 			i + 60
+		// 		).toLowerCase();
+		// 		sequencePart = sequencePart.match(/.{1,10}/g)?.join(" ") ?? "";
+		// 		const number = String(i + 1);
+		// 		const numberText = number.padStart(8, " ");
+		// 		content += ` ${numberText} ${sequencePart}\n`;
+		// 	}
+		// 	content += "//\n\n";
+		// });
+		// return content;
 	}
 
 	private processSequence = (chunk: string): GenbankSequence => {
@@ -85,8 +137,10 @@ export class GenbankSequencesFile extends SequenceFile {
 					Name: header[1],
 					SequenceLength: parseInt(header[2]),
 					MoleculeType: header[4],
-					GenbankDivision: strToGenbankDivision(header[5]),
-					ModificationDate: new Date(header[6]),
+					GenbankDivision: strToGenbankDivision(
+						header[header.length - 2]
+					),
+					ModificationDate: new Date(header[header.length - 1]),
 				};
 			}
 			if (
@@ -274,8 +328,7 @@ export class GenbankSequencesFile extends SequenceFile {
 				line.startsWith("FEATURES")
 			) {
 				if (line.startsWith("FEATURES")) {
-					this.processingParams.currentSequence.Features =
-						[] as Feature[];
+					this.processingParams.currentSequence.Features = [];
 					this.processingParams.inFeature = "FEATURES";
 					continue;
 				}

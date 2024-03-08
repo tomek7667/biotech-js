@@ -6,32 +6,67 @@ Package initially developed at and for A&amp;A Biotechnology for reading all kin
 
 Currently it supports fastq, fasta and genbank files.
 
-## Quick use:
+## Usage
+
+### Reading `Fasta` file
 
 ```typescript
-import {
-	GenbankSequencesFile,
-	FastaSequencesFile,
-	FastqSequencesFile,
-} from "biotech-js";
+import { FastaSequenceFile, ProcessingStatus } from "biotech-js";
 
-// Loading genbank files:
-const genbankFile = new GenbankSequencesFile("path/to/file.gb");
-await genbankFile.process();
-console.log(genbankFile.processingStatus);
-console.log(genbankFile.sequences);
+const file = new FastaSequenceFile("path/to/file.fa");
+await file.process();
 
-// Loading fasta files:
-const fastaFile = new FastaSequencesFile("path/to/file.fa");
-await fastaFile.process();
-console.log(fastaFile.processingStatus);
-console.log(fastaFile.sequences);
+expect(file.processingStatus).toBe(ProcessingStatus.SuccessFinished);
+expect(file.sequences.length).toBe(12345);
+expect(file.tookMs).toBeLessThan(1000);
 
-// Loading fastq files:
-const fastqFile = new FastqSequencesFile("path/to/file.fq");
-await fastqFile.process();
-console.log(fastqFile.processingStatus);
-console.log(fastqFile.sequences);
+await file.save();
+// Default output path is "path/to/file_processed.fa"
+// But you can customize it by passing a path to the save method
+await file.save("path/to/file2.fa");
+```
+
+### Reading `Fastq` file
+
+```typescript
+import { FastqSequenceFile, ProcessingStatus } from "biotech-js";
+
+const file = new FastqSequenceFile("path/to/file1.fastq");
+await file.process();
+
+expect(file.processingStatus).toBe(ProcessingStatus.SuccessFinished);
+expect(file.sequences.length).toBe(12345);
+expect(file.tookMs).toBeLessThan(1000);
+
+await file.save("path/to/file2.fastq");
+```
+
+### Reading `Genbank` file
+
+```typescript
+import { GenbankSequencesFile, ProcessingStatus } from "biotech-js";
+
+const file = new GenbankSequencesFile("path/to/file1.gb");
+await file.process();
+
+expect(file.processingStatus).toBe(ProcessingStatus.SuccessFinished);
+expect(file.sequences.length).toBe(12345);
+expect(file.tookMs).toBeLessThan(1000);
+
+await file.save("path/to/file2.gb");
+```
+
+### Detecting file extension
+
+```typescript
+import { FileExtensionHandler } from "biotech-js";
+
+const path = "path/to/file.fa";
+const pathExtension = path.split(".").pop();
+
+const extension = FileExtensionHandler.fileExtensionToEnum(pathExtension);
+console.log(extension);
+// Output: Fasta
 ```
 
 ### Deployment

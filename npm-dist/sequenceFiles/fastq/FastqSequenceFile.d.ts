@@ -7,5 +7,7 @@ export declare class FastqSequenceFile extends SequenceFile {
     constructor(path: string);
     toString(): string;
     onData(chunk: string): void;
+    onEndCallback(): void;
     resetProcessingParams(): void;
+    private removeEmptySequences;
 }

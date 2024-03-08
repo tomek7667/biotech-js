@@ -1,13 +1,27 @@
 import { SequenceFile } from "../../core";
 import { FastqSequence } from "./FastqSequence";
 
+interface ProcessingParams {
+	preChunk: string;
+	currentSequence: FastqSequence;
+	currentLine: number;
+	gatheredFastqData: string;
+}
+
 export class FastqSequenceFile extends SequenceFile {
 	public sequences: FastqSequence[] = [];
 
-	private processingParams = {
+	private processingParams: ProcessingParams = {
 		preChunk: "",
-		currentSequence: {} as FastqSequence,
+		currentSequence: {
+			quality: [],
+			rawQuality: "",
+			sequence: "",
+			sequenceIdentifier1: "",
+			sequenceIdentifier2: "",
+		},
 		currentLine: 0,
+		gatheredFastqData: "",
 	};
 	private lowestQuality = "!".charCodeAt(0);
 
@@ -16,31 +30,42 @@ export class FastqSequenceFile extends SequenceFile {
 	}
 
 	public toString(): string {
-		// TODO: Implement
-		throw new Error("Method not implemented.");
+		const content = this.sequences
+			.map(
+				({
+					sequenceIdentifier1,
+					sequence,
+					sequenceIdentifier2,
+					rawQuality,
+				}) => {
+					return `@${sequenceIdentifier1}\n${sequence}\n+${sequenceIdentifier2}\n${rawQuality}\n`;
+				}
+			)
+			.join("");
+		return content;
 	}
 
 	public onData(chunk: string): void {
-		const lines = chunk.split(/\r?\n/);
+		this.processingParams.gatheredFastqData += chunk;
+	}
+
+	public onEndCallback(): void {
+		const lines = this.processingParams.gatheredFastqData.split(/\r?\n/);
 		for (let i = 0; i < lines.length; i++) {
 			const line = lines[i];
 			switch (this.processingParams.currentLine) {
 				case 0: {
 					if (
-						this.processingParams.currentSequence.sequence &&
-						this.processingParams.currentSequence.rawQuality
+						this.processingParams.currentSequence.sequence !== "" &&
+						this.processingParams.currentSequence.rawQuality !== ""
 					) {
 						this.sequences.push(
 							this.processingParams.currentSequence
 						);
 					}
-					this.processingParams.currentSequence = {
-						sequenceIdentifier1: line.substring(1),
-						sequence: "",
-						sequenceIdentifier2: "",
-						rawQuality: "",
-						quality: [] as number[],
-					};
+					this.resetProcessingParams();
+					this.processingParams.currentSequence.sequenceIdentifier1 =
+						line.substring(1);
 					break;
 				}
 				case 1: {
@@ -70,13 +95,28 @@ export class FastqSequenceFile extends SequenceFile {
 			this.processingParams.currentLine =
 				(this.processingParams.currentLine + 1) % 4;
 		}
+		this.sequences.push(this.processingParams.currentSequence);
+		this.removeEmptySequences();
 	}
 
 	public resetProcessingParams(): void {
 		this.processingParams = {
 			preChunk: "",
-			currentSequence: {} as FastqSequence,
+			currentSequence: {
+				quality: [],
+				rawQuality: "",
+				sequence: "",
+				sequenceIdentifier1: "",
+				sequenceIdentifier2: "",
+			},
 			currentLine: 0,
+			gatheredFastqData: "",
 		};
+	}
+
+	private removeEmptySequences(): void {
+		this.sequences = this.sequences.filter(
+			({ sequence }) => sequence.length > 0
+		);
 	}
 }

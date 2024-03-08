@@ -24,34 +24,45 @@ var FastqSequenceFile = /** @class */ (function (_super) {
         _this.sequences = [];
         _this.processingParams = {
             preChunk: "",
-            currentSequence: {},
-            currentLine: 0
+            currentSequence: {
+                quality: [],
+                rawQuality: "",
+                sequence: "",
+                sequenceIdentifier1: "",
+                sequenceIdentifier2: ""
+            },
+            currentLine: 0,
+            gatheredFastqData: ""
         };
         _this.lowestQuality = "!".charCodeAt(0);
         return _this;
     }
     FastqSequenceFile.prototype.toString = function () {
-        // TODO: Implement
-        throw new Error("Method not implemented.");
+        var content = this.sequences
+            .map(function (_a) {
+            var sequenceIdentifier1 = _a.sequenceIdentifier1, sequence = _a.sequence, sequenceIdentifier2 = _a.sequenceIdentifier2, rawQuality = _a.rawQuality;
+            return "@".concat(sequenceIdentifier1, "\n").concat(sequence, "\n+").concat(sequenceIdentifier2, "\n").concat(rawQuality, "\n");
+        })
+            .join("");
+        return content;
     };
     FastqSequenceFile.prototype.onData = function (chunk) {
+        this.processingParams.gatheredFastqData += chunk;
+    };
+    FastqSequenceFile.prototype.onEndCallback = function () {
         var _this = this;
-        var lines = chunk.split(/\r?\n/);
+        var lines = this.processingParams.gatheredFastqData.split(/\r?\n/);
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
             switch (this.processingParams.currentLine) {
                 case 0: {
-                    if (this.processingParams.currentSequence.sequence &&
-                        this.processingParams.currentSequence.rawQuality) {
+                    if (this.processingParams.currentSequence.sequence !== "" &&
+                        this.processingParams.currentSequence.rawQuality !== "") {
                         this.sequences.push(this.processingParams.currentSequence);
                     }
-                    this.processingParams.currentSequence = {
-                        sequenceIdentifier1: line.substring(1),
-                        sequence: "",
-                        sequenceIdentifier2: "",
-                        rawQuality: "",
-                        quality: []
-                    };
+                    this.resetProcessingParams();
+                    this.processingParams.currentSequence.sequenceIdentifier1 =
+                        line.substring(1);
                     break;
                 }
                 case 1: {
@@ -79,13 +90,28 @@ var FastqSequenceFile = /** @class */ (function (_super) {
             this.processingParams.currentLine =
                 (this.processingParams.currentLine + 1) % 4;
         }
+        this.sequences.push(this.processingParams.currentSequence);
+        this.removeEmptySequences();
     };
     FastqSequenceFile.prototype.resetProcessingParams = function () {
         this.processingParams = {
             preChunk: "",
-            currentSequence: {},
-            currentLine: 0
+            currentSequence: {
+                quality: [],
+                rawQuality: "",
+                sequence: "",
+                sequenceIdentifier1: "",
+                sequenceIdentifier2: ""
+            },
+            currentLine: 0,
+            gatheredFastqData: ""
         };
+    };
+    FastqSequenceFile.prototype.removeEmptySequences = function () {
+        this.sequences = this.sequences.filter(function (_a) {
+            var sequence = _a.sequence;
+            return sequence.length > 0;
+        });
     };
     return FastqSequenceFile;
 }(core_1.SequenceFile));
